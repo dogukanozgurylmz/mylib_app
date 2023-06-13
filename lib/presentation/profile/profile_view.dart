@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mylib_app/repository/auth_repository.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -99,7 +100,11 @@ class ProfileView extends StatelessWidget {
             const InfoContainer(title: "Kelime", value: "640000"),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                AuthRepository authRepository = AuthRepository();
+                authRepository.signOut();
+                Navigator.of(context).pushReplacementNamed('/');
+              },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(
                   Colors.red[300],

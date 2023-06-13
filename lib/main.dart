@@ -1,13 +1,20 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mylib_app/presentation/addbook/book_add_view.dart';
 import 'package:mylib_app/presentation/home/home_view.dart';
 import 'package:mylib_app/presentation/profile/profile_view.dart';
+import 'package:mylib_app/presentation/splash/splash_view.dart';
 
+import 'firebase_options.dart';
 import 'presentation/signin/sign_in_view.dart';
 
 Future<void> main() async {
   await initializeDateFormatting('tr_TR', null);
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -18,11 +25,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/signin', // İlk açılışta SignInView sayfasını açar
+      initialRoute: '/', // İlk açılışta SplashView sayfasını açar
       routes: {
-        '/': (context) => HomeView(),
+        '/': (context) => SplashView(),
         '/home': (context) => HomeView(),
-        '/signin': (context) => const SignInView(),
+        '/signin': (context) => SignInView(),
         '/addbook': (context) => const AddBookView(),
         '/profile': (context) => const ProfileView(),
       },
