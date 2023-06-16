@@ -5,10 +5,11 @@ class BookRepository {
   final CollectionReference<Map<String, dynamic>> _ref =
       FirebaseFirestore.instance.collection('books');
 
-  Future<void> createBook(BookModel model) async {
+  Future<String> createBook(BookModel model) async {
     String id = _ref.doc().id;
     model.id = id;
     await _ref.doc(id).set(model.toJson());
+    return id;
   }
 
   Future<List<BookModel>> getBooks() async {

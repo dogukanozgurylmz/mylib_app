@@ -1,13 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive/hive.dart';
 
+@HiveType(typeId: 1)
 class BookModel {
+  @HiveField(0)
   String id;
+  @HiveField(1)
   final String bookName;
+  @HiveField(2)
   final String author;
+  @HiveField(3)
   final int page;
+  @HiveField(4)
   final bool isReading;
+  @HiveField(5)
   final DateTime starterDate;
+  @HiveField(6)
   final DateTime endDate;
+  @HiveField(7)
   final DateTime createdAt;
 
   BookModel({
@@ -41,9 +51,9 @@ class BookModel {
       'author': author,
       'page': page,
       'is_reading': isReading,
-      'starter_date': starterDate.millisecondsSinceEpoch,
-      'end_date': endDate.millisecondsSinceEpoch,
-      'created_at': createdAt.millisecondsSinceEpoch,
+      'starter_date': Timestamp.fromDate(starterDate),
+      'end_date': Timestamp.fromDate(endDate),
+      'created_at': Timestamp.fromDate(createdAt),
     };
   }
 }

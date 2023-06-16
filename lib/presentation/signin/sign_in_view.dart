@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mylib_app/presentation/signin/cubit/sign_in_cubit.dart';
+import 'package:mylib_app/repository/local_repository/auth_local_repository.dart';
 import 'package:mylib_app/repository/user_repository.dart';
 
 import '../../repository/auth_repository.dart';
@@ -10,6 +11,7 @@ class SignInView extends StatelessWidget {
 
   final AuthRepository _authRepository = AuthRepository();
   final UserRepository _userRepository = UserRepository();
+  final AuthLocalRepository _authLocalRepository = AuthLocalRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +20,7 @@ class SignInView extends StatelessWidget {
       create: (context) => SignInCubit(
         authRepository: _authRepository,
         userRepository: _userRepository,
+        authLocalRepository: _authLocalRepository,
       ),
       child: BlocBuilder<SignInCubit, SignInState>(
         builder: (context, state) {

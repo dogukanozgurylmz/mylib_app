@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:mylib_app/repository/auth_repository.dart';
 import 'package:mylib_app/repository/book_repository.dart';
 import 'package:mylib_app/repository/bookcase_repository.dart';
+import 'package:mylib_app/repository/local_repository/book_local_repository.dart';
 
 import '../../../model/book_model.dart';
 import '../../../model/bookcase_model.dart';
@@ -17,10 +18,12 @@ class HomeCubit extends Cubit<HomeState> {
     required BookRepository bookRepository,
     required BookcaseRepository bookcaseRepository,
     required UserRepository userRepository,
+    required BookLocalRepository bookLocalRepository,
   })  : _authRepository = authRepository,
         _bookRepository = bookRepository,
         _bookcaseRepository = bookcaseRepository,
         _userRepository = userRepository,
+        _bookLocalRepository = bookLocalRepository,
         super(HomeState(
           status: HomeStatus.INIT,
           userModel: UserModel(
@@ -38,6 +41,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> init() async {
     emit(state.copyWith(status: HomeStatus.LOADING));
+    await clearLocalBooks();
     await currentUser();
     await getBookcasesByUserId();
     await getBooksById();
@@ -49,6 +53,7 @@ class HomeCubit extends Cubit<HomeState> {
   final BookRepository _bookRepository;
   final BookcaseRepository _bookcaseRepository;
   final UserRepository _userRepository;
+  final BookLocalRepository _bookLocalRepository;
 
   Future<void> currentUser() async {
     var currentUser = _authRepository.currentUser();
@@ -77,8 +82,20 @@ class HomeCubit extends Cubit<HomeState> {
       bookIds.addAll(e.bookIds);
     }
     List<BookModel> list = await _bookRepository.getBooksByIds(bookIds);
+    await createLocalBooks(list);
     List<BookModel> books = list.where((element) => element.isReading).toList();
+    books.sort(
+      (a, b) => b.starterDate.compareTo(a.starterDate),
+    );
     emit(state.copyWith(books: books));
+  }
+
+  Future<void> createLocalBooks(List<BookModel> books) async {
+    await _bookLocalRepository.create(books);
+  }
+
+  Future<void> clearLocalBooks() async {
+    await _bookLocalRepository.clear();
   }
 
   List<ChartData> getDateData() {

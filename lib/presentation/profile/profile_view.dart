@@ -1,127 +1,161 @@
-import 'package:flutter/material.dart';
-import 'package:mylib_app/repository/auth_repository.dart';
+// ignore_for_file: use_build_context_synchronously
 
-class ProfileView extends StatelessWidget {
-  const ProfileView({super.key});
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mylib_app/base/base_stateless.dart';
+import 'package:mylib_app/presentation/profile/cubit/profile_cubit.dart';
+import 'package:mylib_app/repository/auth_repository.dart';
+import 'package:mylib_app/repository/local_repository/auth_local_repository.dart';
+import 'package:mylib_app/repository/local_repository/book_local_repository.dart';
+
+class ProfileView extends BaseBlocStateless<ProfileCubit, ProfileState> {
+  ProfileView({super.key});
+  final AuthLocalRepository _authLocalRepository = AuthLocalRepository();
+  final AuthRepository _authRepository = AuthRepository();
+  final BookLocalRepository _bookLocalRepository = BookLocalRepository();
 
   @override
-  Widget build(BuildContext context) {
+  ProfileCubit createBloc(BuildContext context) {
+    return ProfileCubit(
+      authLocalRepository: _authLocalRepository,
+      authRepository: _authRepository,
+      bookLocalRepository: _bookLocalRepository,
+    );
+  }
+
+  @override
+  Widget buildBloc(BuildContext context, state) {
     var textTheme = Theme.of(context).textTheme;
     var size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Profil"),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.width * .5,
-              width: MediaQuery.of(context).size.width * .5,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color(0xff9197AE).withOpacity(0.15),
-                shape: BoxShape.circle,
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xff9197AE).withOpacity(0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: Container(
+    var cubit = context.read<ProfileCubit>();
+    switch (state.status) {
+      case ProfileStatus.LOADED:
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Profil"),
+            centerTitle: true,
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.width * .5,
+                  width: MediaQuery.of(context).size.width * .5,
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: const Color(0xff9197AE).withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(150),
-                    child: Image.network(
-                      "https://picsum.photos/1000",
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              "Doğukan Özgür Yılmaz",
-              style: textTheme.headlineSmall!
-                  .copyWith(fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {},
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                  const Color(0xff273043),
-                ),
-                minimumSize: MaterialStateProperty.all(Size(size.width, 40)),
-                padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Profili düzenle',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(color: Colors.white),
-                  ),
-                  Container(
-                    width: 70,
-                    padding: const EdgeInsets.only(right: 4),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
+                      color: const Color(0xff9197AE).withOpacity(0.15),
+                      shape: BoxShape.circle,
                     ),
-                    child: const Align(
-                      alignment: Alignment.centerRight,
-                      child: Icon(
-                        Icons.arrow_forward,
-                        color: Color(0xff273043),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xff9197AE).withOpacity(0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(150),
+                        child: Image.network(
+                          state.userModel.photoUrl,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            const InfoContainer(title: "Kitap", value: "8"),
-            const SizedBox(height: 5),
-            const InfoContainer(title: "Sayfa", value: "3400"),
-            const SizedBox(height: 5),
-            const InfoContainer(title: "Kelime", value: "640000"),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                AuthRepository authRepository = AuthRepository();
-                authRepository.signOut();
-                Navigator.of(context).pushReplacementNamed('/');
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                  Colors.red[300],
+                  ),
                 ),
-              ),
-              child: Text(
-                'Çıkış yap',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(color: Colors.white),
-              ),
+                const SizedBox(height: 20),
+                Text(
+                  state.userModel.fullName,
+                  style: textTheme.headlineSmall!
+                      .copyWith(fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                      const Color(0xff273043),
+                    ),
+                    minimumSize:
+                        MaterialStateProperty.all(Size(size.width, 40)),
+                    padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Profili düzenle',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(color: Colors.white),
+                      ),
+                      Container(
+                        width: 70,
+                        padding: const EdgeInsets.only(right: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Align(
+                          alignment: Alignment.centerRight,
+                          child: Icon(
+                            Icons.arrow_forward,
+                            color: Color(0xff273043),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                InfoContainer(
+                    title: "Kitap", value: state.books.length.toString()),
+                const SizedBox(height: 5),
+                InfoContainer(title: "Sayfa", value: state.totalPages),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await cubit.signOut();
+                      Navigator.of(context).pushReplacementNamed('/');
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                        Colors.red[300],
+                      ),
+                    ),
+                    child: Text(
+                      'Çıkış yap',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge!
+                          .copyWith(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        );
+      case ProfileStatus.LOADING:
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      default:
+        return const SizedBox.shrink();
+    }
   }
 }
 
@@ -146,9 +180,9 @@ class InfoContainer extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff273043)),
           ),
           const VerticalDivider(
             endIndent: 5,

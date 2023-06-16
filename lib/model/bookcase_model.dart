@@ -29,9 +29,9 @@ class BookcaseModel {
     return {
       'id': id,
       'title': title,
-      'book_id': bookIds,
+      'book_ids': bookIds,
       'user_id': userId,
-      'created_at': createdAt.millisecondsSinceEpoch,
+      'created_at': Timestamp.fromDate(createdAt),
     };
   }
 }
