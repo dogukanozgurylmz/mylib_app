@@ -22,7 +22,11 @@ class BookcaseDetailsCubit extends Cubit<BookcaseDetailsState> {
     List<BookModel> books = [];
     DataResult<List<BookModel>> list =
         await _bookLocalDatasourceImpl.getBooks();
+    if (!list.success) {
+      return;
+    }
     for (var id in bookIds) {
+      print(list.message);
       var firstWhere = list.data!.firstWhere((element) => element.id == id);
       books.add(firstWhere);
     }

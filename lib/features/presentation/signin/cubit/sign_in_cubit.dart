@@ -4,8 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mylib_app/features/core/result/data_result.dart';
 import 'package:mylib_app/features/data/datasource/local_repository/impl/user_local_datasource_impl.dart';
 import 'package:mylib_app/features/data/model/user_model.dart';
-import 'package:mylib_app/features/data/repository/auth_repository.dart';
-import 'package:mylib_app/features/data/repository/user_repository.dart';
 
 import '../../../data/repository/impl/auth_repository_impl.dart';
 import '../../../data/repository/impl/user_repository_impl.dart';
@@ -38,7 +36,7 @@ class SignInCubit extends Cubit<SignInState> {
       await _userLocalDatasourceImpl.clear();
       DataResult<UserModel> usermodel =
           await _userRepositoryImpl.getUserByEmail(user.data!.email ?? "");
-      if (usermodel.data!.email.isNotEmpty) {
+      if (usermodel.success) {
         _userLocalDatasourceImpl.create(usermodel.data!);
         emit(state.copyWith(status: SignInStatus.LOADED));
         return;

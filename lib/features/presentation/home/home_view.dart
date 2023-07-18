@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mylib_app/features/core/constant/padding_constant.dart';
+import 'package:mylib_app/features/core/widgets/home_appbar_widget.dart';
+import 'package:mylib_app/features/core/widgets/loading_widget.dart';
 import 'package:mylib_app/features/data/datasource/local_repository/impl/book_local_datasource_impl.dart.dart';
-import 'package:mylib_app/features/data/model/user_model.dart';
 import 'package:mylib_app/features/data/repository/impl/summary_repository_impl.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import '../../../base/base_stateless.dart';
+import '../../core/base/base_stateless.dart';
+import '../../core/enums/space_sizedbox.dart';
+import '../../core/widgets/custom_button.dart';
 import '../../data/repository/impl/auth_repository_impl.dart';
 import '../../data/repository/impl/book_repository_impl.dart';
 import '../../data/repository/impl/bookcase_repository_impl.dart';
@@ -60,7 +63,7 @@ class HomeView extends BaseBlocStateless<HomeCubit, HomeState> {
 
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: _appBar(context, userModel),
+          appBar: HomeAppBarWidget(photoUrl: userModel.photoUrl),
           floatingActionButton: FAB(state: state),
           body: RefreshIndicator(
             triggerMode: RefreshIndicatorTriggerMode.anywhere,
@@ -73,7 +76,7 @@ class HomeView extends BaseBlocStateless<HomeCubit, HomeState> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: PaddingConstant.appPaddingHor,
                     child: Text(
                       "Merhaba,",
                       style: textTheme.headlineSmall!
@@ -81,20 +84,24 @@ class HomeView extends BaseBlocStateless<HomeCubit, HomeState> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: PaddingConstant.appPaddingHor,
                     child: Text(
                       userModel.fullName,
                       style: textTheme.headlineMedium!,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SpaceVerticalSizedBox.l.value,
                   state.books.isEmpty
-                      ? Align(
-                          alignment: Alignment.center,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            child: const Text("Şimdi okumaya başla"),
-                          ),
+                      ? Padding(
+                          padding: PaddingConstant.appPaddingHor,
+                          child: Align(
+                              alignment: Alignment.center,
+                              child: CustomButton(
+                                onPressed: () {
+                                  Navigator.of(context).pushNamed('/addbook');
+                                },
+                                text: "Şimdi okumaya başla",
+                              )),
                         )
                       : Animate()
                           .custom(
@@ -117,9 +124,9 @@ class HomeView extends BaseBlocStateless<HomeCubit, HomeState> {
                             delay: const Duration(milliseconds: 100),
                             curve: Curves.easeInCirc,
                           ),
-                  const SizedBox(height: 20),
+                  SpaceVerticalSizedBox.l.value,
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: PaddingConstant.appPaddingHor,
                     child: Text(
                       "Kitaplıklarım",
                       style: textTheme.titleMedium!.copyWith(
@@ -127,15 +134,14 @@ class HomeView extends BaseBlocStateless<HomeCubit, HomeState> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SpaceVerticalSizedBox.s.value,
                   state.bookcases.isEmpty
                       ? Align(
                           alignment: Alignment.center,
-                          child: ElevatedButton(
+                          child: CustomButton(
+                            text: "Şimdi kitap ekle",
                             onPressed: () {},
-                            child: const Text("Şimdi kitaplık ekle"),
-                          ),
-                        )
+                          ))
                       : Animate()
                           .custom(
                             builder: (_, value, __) => BookcaseWidget(
@@ -152,11 +158,11 @@ class HomeView extends BaseBlocStateless<HomeCubit, HomeState> {
                             delay: const Duration(milliseconds: 100),
                             curve: Curves.easeInCirc,
                           ),
-                  const SizedBox(height: 10),
+                  SpaceVerticalSizedBox.s.value,
                   state.summaries.isEmpty
                       ? const SizedBox.shrink()
                       : Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          padding: PaddingConstant.appPaddingHor,
                           child: Text(
                             "Kitap özetleri",
                             style: textTheme.titleMedium!.copyWith(
@@ -171,11 +177,11 @@ class HomeView extends BaseBlocStateless<HomeCubit, HomeState> {
                           size: size,
                           state: state,
                         ),
-                  const SizedBox(height: 10),
+                  SpaceVerticalSizedBox.s.value,
                   state.books.isEmpty
                       ? const SizedBox.shrink()
                       : Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          padding: PaddingConstant.appPaddingHor,
                           child: Text(
                             "İstatistik",
                             style: textTheme.titleMedium!.copyWith(
@@ -194,34 +200,11 @@ class HomeView extends BaseBlocStateless<HomeCubit, HomeState> {
         );
       case HomeStatus.LOADING:
         return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
+          body: LoadingWidget(),
         );
       default:
         return const SizedBox.shrink();
     }
-  }
-
-  AppBar _appBar(BuildContext context, UserModel userModel) {
-    return AppBar(
-      backgroundColor: Colors.white,
-      title: const Text("myLib"),
-      actions: [
-        InkWell(
-          onTap: () {
-            Navigator.of(context).pushNamed("/profile");
-          },
-          borderRadius: BorderRadius.circular(45),
-          child: CircleAvatar(
-            backgroundImage: NetworkImage(userModel.photoUrl),
-          ),
-        ),
-        const SizedBox(width: 10),
-      ],
-      surfaceTintColor: Colors.transparent,
-      automaticallyImplyLeading: false,
-    );
   }
 }
 
@@ -240,7 +223,7 @@ class SummaryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: PaddingConstant.appPaddingHor,
       child: SizedBox(
         height: 300,
         child: PageView.builder(
@@ -264,7 +247,7 @@ class SummaryWidget extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  SpaceVerticalSizedBox.xs.value,
                   Expanded(
                     child: Text(
                       summary.summary,
@@ -275,24 +258,11 @@ class SummaryWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  ElevatedButton(
+                  SpaceVerticalSizedBox.xs.value,
+                  CustomButton(
+                    text: "Özeti gör",
                     onPressed: () {},
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                        const Color(0xff273043),
-                      ),
-                      minimumSize:
-                          MaterialStateProperty.all(Size(size.width, 40)),
-                    ),
-                    child: Text(
-                      'Özeti gör',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .copyWith(color: Colors.white),
-                    ),
-                  ),
+                  )
                 ],
               );
             }),
@@ -436,7 +406,7 @@ class BookcaseWidget extends StatelessWidget {
           child: Container(
             height: 100,
             width: size.width,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: PaddingConstant.homeBookcasePadding,
             decoration: BoxDecoration(
               color: const Color(0xff273043),
               borderRadius: BorderRadius.circular(45),
@@ -504,7 +474,7 @@ class ReadingBookWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: PaddingConstant.appPaddingHor,
       child: Column(
         children: [
           Container(
@@ -536,9 +506,9 @@ class ReadingBookWidget extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 10),
+          SpaceVerticalSizedBox.s.value,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: PaddingConstant.appPaddingHor,
             child: LinearPercentIndicator(
               width: MediaQuery.of(context).size.width * 0.85,
               animation: true,

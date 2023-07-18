@@ -32,9 +32,7 @@ class AuthRepositoryImpl extends AuthRepository {
     }
   }
 
-  User? currentUser() {
-    return _auth.currentUser;
-  }
+  User? get currentUser => _auth.currentUser;
 
   @override
   Future<Result> signOut() async {

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mylib_app/base/base_stateless.dart';
+import 'package:mylib_app/features/core/base/base_stateless.dart';
+import 'package:mylib_app/features/core/widgets/loading_widget.dart';
 import 'package:mylib_app/features/data/datasource/local_repository/impl/user_local_datasource_impl.dart';
 import 'package:mylib_app/features/data/repository/impl/bookcase_repository_impl.dart';
 
+import '../../core/constant/padding_constant.dart';
+import '../../core/enums/space_sizedbox.dart';
+import '../../core/widgets/custom_button.dart';
 import 'cubit/add_bookcase_cubit.dart';
 
 class AddBookcaseView
@@ -32,7 +36,7 @@ class AddBookcaseView
       ),
       body: Form(
           child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: PaddingConstant.formPadding,
         child: Column(
           children: [
             TextFormField(
@@ -58,32 +62,13 @@ class AddBookcaseView
                 return null;
               },
             ),
-            const SizedBox(height: 10),
+            SpaceVerticalSizedBox.m.value,
             state.isSubmit
-                ? const CircularProgressIndicator(
-                    color: Color(0xff273043),
+                ? const LoadingWidget()
+                : CustomButton(
+                    text: "Ekle",
+                    onPressed: cubit.submitForm,
                   )
-                : ElevatedButton(
-                    onPressed: () {
-                      cubit.submitForm().whenComplete(
-                            () => Navigator.of(context).pop(),
-                          );
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                        const Color(0xff273043),
-                      ),
-                      minimumSize:
-                          MaterialStateProperty.all(Size(size.width, 40)),
-                    ),
-                    child: Text(
-                      'Ekle',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .copyWith(color: Colors.white),
-                    ),
-                  ),
           ],
         ),
       )),

@@ -5,6 +5,7 @@ import 'package:mylib_app/features/core/result/data_result.dart';
 import 'package:mylib_app/features/data/datasource/local_repository/impl/user_local_datasource_impl.dart';
 import 'package:mylib_app/features/data/model/book_model.dart';
 import 'package:mylib_app/features/data/model/bookcase_model.dart';
+import 'package:mylib_app/features/data/repository/impl/auth_repository_impl.dart';
 
 import '../../../data/model/user_model.dart';
 import '../../../data/repository/impl/book_repository_impl.dart';
@@ -90,6 +91,7 @@ class AddBookCubit extends Cubit<AddBookState> {
   }
 
   Future<void> createBook() async {
+    var currentUser = await _userLocalDatasourceImpl.currentUser();
     BookModel bookModel = BookModel(
       id: '',
       bookName: titleController.text.trim(),
@@ -99,6 +101,7 @@ class AddBookCubit extends Cubit<AddBookState> {
       starterDate: state.startDate,
       endDate: state.endDate,
       createdAt: DateTime.now(),
+      userId: currentUser.data!.id,
     );
     var dataResult = await _bookRepositoryImpl.createBook(bookModel);
     _bookId = dataResult.data;

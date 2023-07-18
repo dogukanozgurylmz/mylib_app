@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mylib_app/base/base_stateless.dart';
+import 'package:mylib_app/features/core/base/base_stateless.dart';
+import 'package:mylib_app/features/core/widgets/loading_widget.dart';
 import 'package:mylib_app/features/data/datasource/local_repository/impl/user_local_datasource_impl.dart';
 
+import '../../core/constant/padding_constant.dart';
+import '../../core/enums/space_sizedbox.dart';
 import '../../data/repository/impl/auth_repository_impl.dart';
 import '../../data/repository/impl/user_repository_impl.dart';
 import 'cubit/sign_in_cubit.dart';
 
-class SignInView extends BaseBlocStateless {
+class SignInView extends BaseBlocStateless<SignInCubit, SignInState> {
   const SignInView({Key? key}) : super(key: key);
 
   @override
-  BlocBase createBloc(BuildContext context) {
+  SignInCubit createBloc(BuildContext context) {
     final AuthRepositoryImpl authRepositoryImpl = AuthRepositoryImpl();
     final UserRepositoryImpl userRepositoryImpl = UserRepositoryImpl();
     final UserLocalDatasourceImpl userLocalDatasourceImpl =
@@ -36,7 +39,7 @@ class SignInView extends BaseBlocStateless {
       case SignInStatus.INIT:
         return Scaffold(
           body: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: PaddingConstant.appPaddingHor,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -67,15 +70,13 @@ class SignInView extends BaseBlocStateless {
                         .copyWith(color: Colors.white),
                   ),
                 ),
-                const SizedBox(height: 12),
+                SpaceVerticalSizedBox.s.value,
               ],
             ),
           ),
         );
       case SignInStatus.LOADING:
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
+        return const Scaffold(body: LoadingWidget());
       case SignInStatus.ERROR:
         WidgetsBinding.instance.addPostFrameCallback((_) {
           showDialog(

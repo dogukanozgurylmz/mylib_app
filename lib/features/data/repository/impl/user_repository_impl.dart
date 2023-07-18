@@ -1,13 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mylib_app/features/data/repository/firebase_mixin.dart';
 import 'package:mylib_app/features/data/repository/user_repository.dart';
 
 import '../../../core/result/data_result.dart';
 import '../../../core/result/result.dart';
 import '../../model/user_model.dart';
 
-class UserRepositoryImpl extends UserRepository {
-  final CollectionReference<Map<String, dynamic>> _ref =
-      FirebaseFirestore.instance.collection('users');
+class UserRepositoryImpl extends UserRepository with FirebaseMixin {
+  late final CollectionReference<Map<String, dynamic>> _ref;
+
+  UserRepositoryImpl() {
+    _ref = firestore.collection('users');
+  }
 
   @override
   Future<Result> createUser(UserModel model) async {

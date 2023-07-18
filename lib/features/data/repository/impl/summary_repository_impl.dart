@@ -1,13 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mylib_app/features/data/model/summary_model.dart';
+import 'package:mylib_app/features/data/repository/firebase_mixin.dart';
 import 'package:mylib_app/features/data/repository/summary_repository.dart';
 
 import '../../../core/result/data_result.dart';
 import '../../../core/result/result.dart';
 
-class SummaryRepositoryImpl extends SummaryRepository {
-  final CollectionReference<Map<String, dynamic>> _ref =
-      FirebaseFirestore.instance.collection('summaries');
+class SummaryRepositoryImpl extends SummaryRepository with FirebaseMixin {
+  late final CollectionReference<Map<String, dynamic>> _ref;
+
+  SummaryRepositoryImpl() {
+    _ref = firestore.collection('summaries');
+  }
 
   @override
   Future<Result> create(SummaryModel model) async {

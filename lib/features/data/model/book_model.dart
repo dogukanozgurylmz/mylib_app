@@ -19,6 +19,8 @@ class BookModel {
   final DateTime endDate;
   @HiveField(7)
   final DateTime createdAt;
+  @HiveField(8)
+  final String userId;
 
   BookModel({
     required this.id,
@@ -29,6 +31,7 @@ class BookModel {
     required this.starterDate,
     required this.endDate,
     required this.createdAt,
+    required this.userId,
   });
 
   factory BookModel.fromJson(Map<String, dynamic> json) {
@@ -41,6 +44,7 @@ class BookModel {
       starterDate: (json['starter_date'] as Timestamp).toDate(),
       endDate: (json['end_date'] as Timestamp).toDate(),
       createdAt: (json['created_at'] as Timestamp).toDate(),
+      userId: json['user_id'] as String,
     );
   }
 
@@ -54,6 +58,7 @@ class BookModel {
       'starter_date': Timestamp.fromDate(starterDate),
       'end_date': Timestamp.fromDate(endDate),
       'created_at': Timestamp.fromDate(createdAt),
+      'user_id': userId,
     };
   }
 }

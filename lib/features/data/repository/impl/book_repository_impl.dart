@@ -1,13 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mylib_app/features/data/model/book_model.dart';
 import 'package:mylib_app/features/data/repository/book_repository.dart';
+import 'package:mylib_app/features/data/repository/firebase_mixin.dart';
 
 import '../../../core/result/data_result.dart';
 import '../../../core/result/result.dart';
 
-class BookRepositoryImpl extends BookRepository {
-  final CollectionReference<Map<String, dynamic>> _ref =
-      FirebaseFirestore.instance.collection('books');
+class BookRepositoryImpl extends BookRepository with FirebaseMixin {
+  late final CollectionReference<Map<String, dynamic>> _ref;
+
+  BookRepositoryImpl() {
+    _ref = firestore.collection('books');
+  }
 
   @override
   Future<DataResult> createBook(BookModel model) async {

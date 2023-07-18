@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:mylib_app/base/base_stateless.dart';
+import 'package:mylib_app/features/core/base/base_stateless.dart';
+import 'package:mylib_app/features/core/widgets/basic_appbar_widget.dart';
+import 'package:mylib_app/features/core/widgets/custom_button.dart';
+import 'package:mylib_app/features/core/widgets/loading_widget.dart';
 import 'package:mylib_app/features/data/datasource/local_repository/impl/user_local_datasource_impl.dart';
 
+import '../../core/constant/padding_constant.dart';
+import '../../core/enums/space_sizedbox.dart';
 import '../../data/repository/impl/book_repository_impl.dart';
 import '../../data/repository/impl/bookcase_repository_impl.dart';
 import 'cubit/add_book_cubit.dart';
@@ -30,17 +35,14 @@ class AddBookView extends BaseBlocStateless<AddBookCubit, AddBookState> {
     switch (state.status) {
       case AddBookStatus.LOADED:
         return Scaffold(
-          appBar: AppBar(
-            title: const Text('Kitap ekle'),
-            surfaceTintColor: Colors.transparent,
-          ),
+          appBar: const BasicAppBarWidget(title: "Kitap ekle"),
           body: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: PaddingConstant.formPadding,
             child: Form(
               key: cubit.formKey,
               child: ListView(
                 children: [
-                  const SizedBox(height: 16.0),
+                  SpaceVerticalSizedBox.m.value,
                   TextFormField(
                     controller: cubit.titleController,
                     decoration: InputDecoration(
@@ -64,7 +66,7 @@ class AddBookView extends BaseBlocStateless<AddBookCubit, AddBookState> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16.0),
+                  SpaceVerticalSizedBox.m.value,
                   TextFormField(
                     controller: cubit.authorController,
                     decoration: InputDecoration(
@@ -88,7 +90,7 @@ class AddBookView extends BaseBlocStateless<AddBookCubit, AddBookState> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16.0),
+                  SpaceVerticalSizedBox.m.value,
                   TextFormField(
                     controller: cubit.pageCountController,
                     decoration: InputDecoration(
@@ -113,7 +115,7 @@ class AddBookView extends BaseBlocStateless<AddBookCubit, AddBookState> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16.0),
+                  SpaceVerticalSizedBox.m.value,
                   InkWell(
                     onTap: () async {
                       final selectedDate = await showDatePicker(
@@ -148,7 +150,7 @@ class AddBookView extends BaseBlocStateless<AddBookCubit, AddBookState> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16.0),
+                  SpaceVerticalSizedBox.m.value,
                   InkWell(
                     onTap: () async {
                       final selectedDate = await showDatePicker(
@@ -183,7 +185,7 @@ class AddBookView extends BaseBlocStateless<AddBookCubit, AddBookState> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16.0),
+                  SpaceVerticalSizedBox.m.value,
                   DropdownButtonFormField<String>(
                     value: state.bookcases.first.title,
                     items: state.bookcases.map((bookcase) {
@@ -216,7 +218,7 @@ class AddBookView extends BaseBlocStateless<AddBookCubit, AddBookState> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16.0),
+                  SpaceVerticalSizedBox.m.value,
                   const Text("Şuan okuyorum"),
                   Align(
                     alignment: Alignment.centerLeft,
@@ -231,28 +233,13 @@ class AddBookView extends BaseBlocStateless<AddBookCubit, AddBookState> {
                       },
                     ),
                   ),
-                  const SizedBox(height: 16.0),
+                  SpaceVerticalSizedBox.m.value,
                   state.isSubmit
-                      ? const Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xff273043),
-                          ),
-                        )
-                      : ElevatedButton(
+                      ? const LoadingWidget()
+                      : CustomButton(
+                          text: "Ekle",
                           onPressed: cubit.submitForm,
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                              const Color(0xff273043),
-                            ),
-                          ),
-                          child: Text(
-                            'Ekle',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(color: Colors.white),
-                          ),
-                        ),
+                        )
                 ],
               ),
             ),
@@ -260,7 +247,7 @@ class AddBookView extends BaseBlocStateless<AddBookCubit, AddBookState> {
         );
       case AddBookStatus.LOADING:
         return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
+          body: LoadingWidget(),
         );
       default:
         return const Scaffold(

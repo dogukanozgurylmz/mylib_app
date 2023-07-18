@@ -65,9 +65,13 @@ class HomeCubit extends Cubit<HomeState> {
   final SummaryRepositoryImpl _summaryRepositoryImpl;
 
   Future<void> currentUser() async {
-    var currentUser = _authRepositoryImpl.currentUser();
+    var currentUser = _authRepositoryImpl.currentUser;
     DataResult<UserModel> dataResult =
         await _userRepositoryImpl.getUserByEmail(currentUser!.email ?? "");
+    if (!dataResult.success) {
+      print("home cubit hata");
+      return;
+    }
 
     emit(state.copyWith(
         userModel: UserModel(
@@ -93,6 +97,10 @@ class HomeCubit extends Cubit<HomeState> {
     await getAllSummaries(bookIds);
     DataResult<List<BookModel>> dataResult =
         await _bookRepositoryImpl.getBooksByIds(bookIds);
+    if (!dataResult.success) {
+      print("getBooksByIds error");
+      return;
+    }
     dataResult.data!.sort(
       (a, b) => b.starterDate.compareTo(a.starterDate),
     );
@@ -127,8 +135,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   List<ChartData> getDateData() {
     Map<String, int> bookCounts = {};
-
-    for (BookModel book in state.books) {
+    var where =
+        state.books.where((element) => element.isReading == true).toList();
+    for (BookModel book in where) {
       int year = book.endDate.year;
       int month = book.endDate.month;
 

@@ -2,10 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mylib_app/base/base_stateless.dart';
+import 'package:mylib_app/features/core/base/base_stateless.dart';
+import 'package:mylib_app/features/core/enums/space_sizedbox.dart';
+import 'package:mylib_app/features/core/widgets/loading_widget.dart';
 import 'package:mylib_app/features/data/datasource/local_repository/impl/book_local_datasource_impl.dart.dart';
 import 'package:mylib_app/features/data/datasource/local_repository/impl/user_local_datasource_impl.dart';
 
+import '../../core/constant/padding_constant.dart';
 import '../../data/repository/impl/auth_repository_impl.dart';
 import 'cubit/profile_cubit.dart';
 
@@ -39,25 +42,25 @@ class ProfileView extends BaseBlocStateless<ProfileCubit, ProfileState> {
             centerTitle: true,
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.all(8),
+            padding: PaddingConstant.paddingAll10,
             child: Column(
               children: [
                 Container(
                   height: MediaQuery.of(context).size.width * .5,
                   width: MediaQuery.of(context).size.width * .5,
-                  padding: const EdgeInsets.all(10),
+                  padding: PaddingConstant.paddingAll10,
                   decoration: BoxDecoration(
                     color: const Color(0xff9197AE).withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
                   child: Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: PaddingConstant.paddingAll10,
                     decoration: BoxDecoration(
                       color: const Color(0xff9197AE).withOpacity(0.15),
                       shape: BoxShape.circle,
                     ),
                     child: Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: PaddingConstant.paddingAll10,
                       decoration: BoxDecoration(
                         color: const Color(0xff9197AE).withOpacity(0.15),
                         shape: BoxShape.circle,
@@ -72,13 +75,13 @@ class ProfileView extends BaseBlocStateless<ProfileCubit, ProfileState> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                SpaceVerticalSizedBox.l.value,
                 Text(
                   state.userModel.fullName,
                   style: textTheme.headlineSmall!
                       .copyWith(fontWeight: FontWeight.w500),
                 ),
-                const SizedBox(height: 20),
+                SpaceVerticalSizedBox.l.value,
                 ElevatedButton(
                   onPressed: () {},
                   style: ButtonStyle(
@@ -88,8 +91,7 @@ class ProfileView extends BaseBlocStateless<ProfileCubit, ProfileState> {
                     minimumSize:
                         MaterialStateProperty.all(Size(size.width, 40)),
                     padding: MaterialStateProperty.all(
-                        const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5)),
+                        PaddingConstant.appPaddingHor),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,12 +121,12 @@ class ProfileView extends BaseBlocStateless<ProfileCubit, ProfileState> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                SpaceVerticalSizedBox.s.value,
                 InfoContainer(
                     title: "Kitap", value: state.books.length.toString()),
-                const SizedBox(height: 5),
+                SpaceVerticalSizedBox.xs.value,
                 InfoContainer(title: "Sayfa", value: state.totalPages),
-                const SizedBox(height: 10),
+                SpaceVerticalSizedBox.s.value,
                 Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
@@ -151,11 +153,7 @@ class ProfileView extends BaseBlocStateless<ProfileCubit, ProfileState> {
           ),
         );
       case ProfileStatus.LOADING:
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
+        return const Scaffold(body: LoadingWidget());
       default:
         return const SizedBox.shrink();
     }
@@ -191,7 +189,6 @@ class InfoContainer extends StatelessWidget {
             endIndent: 5,
             indent: 5,
           ),
-          const SizedBox(height: 5),
           SizedBox(width: 70, child: Text(title)),
         ],
       ),

@@ -1,13 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mylib_app/features/data/model/bookcase_model.dart';
 import 'package:mylib_app/features/data/repository/bookcase_repository.dart';
+import 'package:mylib_app/features/data/repository/firebase_mixin.dart';
 
 import '../../../core/result/data_result.dart';
 import '../../../core/result/result.dart';
 
-class BookcaseRepositoryImpl extends BookcaseRepository {
-  final CollectionReference<Map<String, dynamic>> _ref =
-      FirebaseFirestore.instance.collection('bookcases');
+class BookcaseRepositoryImpl extends BookcaseRepository with FirebaseMixin {
+  late final CollectionReference<Map<String, dynamic>> _ref;
+
+  BookcaseRepositoryImpl() {
+    _ref = firestore.collection('bookcases');
+  }
 
   @override
   Future<Result> createBookcase(BookcaseModel model) async {

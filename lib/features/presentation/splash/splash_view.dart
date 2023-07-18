@@ -11,7 +11,7 @@ class SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = _authRepository.currentUser();
+    final currentUser = _authRepository.currentUser;
     if (currentUser == null) {
       return const SignInView();
     } else {

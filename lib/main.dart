@@ -5,7 +5,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mylib_app/features/data/model/book_model.dart';
 import 'package:mylib_app/features/data/model/user_model.dart';
 import 'package:mylib_app/features/data/model/model_adapters/book_model_adapter.dart';
-import 'package:provider/provider.dart';
 
 import 'features/presentation/addbook/book_add_view.dart';
 import 'features/presentation/addbookcase/add_bookcase_view.dart';
@@ -21,7 +20,6 @@ import 'features/data/model/model_adapters/user_model_adapters.dart';
 Future<void> main() async {
   await initializeDateFormatting('tr_TR', null);
   WidgetsFlutterBinding.ensureInitialized();
-  Provider.debugCheckInvalidValueType = null;
   await Hive.initFlutter();
   Hive.registerAdapter<UserModel>(UserModelAdapter());
   Hive.registerAdapter<BookModel>(BookModelAdapter());
@@ -57,7 +55,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      title: 'Flutter Demo',
+      title: 'myLib App',
       theme: ThemeData(
         useMaterial3: true,
       ),
